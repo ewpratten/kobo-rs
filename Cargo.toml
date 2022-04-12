@@ -9,8 +9,8 @@ readme = "README.md"
 homepage = "https://github.com/ewpratten/kobo-rs"
 repository = "https://github.com/ewpratten/kobo-rs"
 license = "GPL-3.0"
-keywords = []
-categories = []
+keywords = ["fbink", "kobo", "eink"]
+categories = ["api-bindings", "embedded", "hardware-support", "rendering::graphics-api"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
