@@ -64,3 +64,5 @@
     nonstandard_style,
     rust_2018_idioms
 )]
+
+pub mod input;

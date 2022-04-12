@@ -1,0 +1,2 @@
+[toolchain]
+targets = ["arm-unknown-linux-musleabihf"]

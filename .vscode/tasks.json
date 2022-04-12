@@ -1,0 +1,45 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cargo",
+			"command": "build",
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "Build "
+		},
+		{
+			"type": "shell",
+			"command": "cross",
+			"args": [
+				"build",
+				"--target",
+				"arm-unknown-linux-musleabihf"
+			],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "Build ARM-DEBUG"
+		},
+		{
+			"type": "shell",
+			"command": "cross",
+			"args": [
+				"build",
+				"--target",
+				"arm-unknown-linux-musleabihf",
+				"--release",
+				"--example",
+				"touch2coord"
+			],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "Example: touch2coord"
+		}
+	]
+}
