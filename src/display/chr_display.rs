@@ -7,12 +7,16 @@ use regex::Regex;
 
 use crate::coords::{CharSpaceCoord, PixelSpaceCoord};
 
-use super::error::DisplayError;
+use super::{color::EinkColor, error::DisplayError};
 
 const FBINK_VAR_PARSE: &str =
     r"screenWidth=(\d+).*screenHeight=(\d+).*MAXCOLS=(\d+).*MAXROWS=(\d+)";
 
 /// A simple character-only display controller
+///
+/// # Debugging FBInk
+///
+/// You can set `KOBO_RS_DEBUG_FBINK=1` in your environment to enable debug printing for the FBInk subprocess
 pub struct CharacterDisplay {
     /// Executable path of FBInk
     fbink_path: PathBuf,
@@ -60,7 +64,15 @@ impl CharacterDisplay {
     fn fbink_exec(&self, args: Vec<String>) -> std::io::Result<ExitStatus> {
         let mut cmd = Command::new(&self.fbink_path);
         cmd.args(args);
-        cmd.status()
+
+        // If the `KOBO_RS_DEBUG_FBINK` environment variable is set, pass the command output to stdout otherwise keep it silent
+        if std::env::var("KOBO_RS_DEBUG_FBINK").is_ok() {
+            cmd.stdout(std::process::Stdio::inherit());
+        } else {
+            cmd.stdout(std::process::Stdio::null());
+        }
+
+        Ok(cmd.output()?.status)
     }
 
     /// Get the screen size in pixels
@@ -84,12 +96,18 @@ impl CharacterDisplay {
         s: &str,
         pos: CharSpaceCoord,
         invert_colors: bool,
+        color: Option<EinkColor>,
+        background_color: Option<EinkColor>,
     ) -> std::io::Result<ExitStatus> {
         let mut args = vec![
             "-y".to_string(),
             pos.y.to_string(),
             "-x".to_string(),
             pos.x.to_string(),
+            "-C".to_string(),
+            color.unwrap_or(EinkColor::Black).to_string(),
+            "-B".to_string(),
+            background_color.unwrap_or(EinkColor::White).to_string(),
             s.to_string(),
         ];
 

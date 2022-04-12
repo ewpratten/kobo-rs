@@ -57,6 +57,23 @@
 			],
 			"group": "build",
 			"label": "Example: display"
+		},
+		{
+			"type": "shell",
+			"command": "cross",
+			"args": [
+				"build",
+				"--target",
+				"arm-unknown-linux-musleabihf",
+				"--release",
+				"--example",
+				"gui"
+			],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "Example: gui"
 		}
 	]
 }

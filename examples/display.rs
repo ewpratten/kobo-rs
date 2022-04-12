@@ -14,6 +14,8 @@ fn main() {
             "                      \n  Hello from kobo-rs! \n                       ",
             CharSpaceCoord::new(12, 30),
             true,
+            None,
+            None,
         )
         .unwrap();
 }
