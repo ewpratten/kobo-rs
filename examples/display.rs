@@ -11,8 +11,9 @@ fn main() {
     // Display a welcome message
     display
         .write_str(
-            "+---------------------+\n| Hello from kobo-rs! |\n+---------------------+",
+            "                      \n  Hello from kobo-rs! \n                       ",
             CharSpaceCoord::new(12, 30),
+            true,
         )
         .unwrap();
 }

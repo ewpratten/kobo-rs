@@ -79,13 +79,24 @@ impl CharacterDisplay {
     }
 
     /// Write a string to a specific display position
-    pub fn write_str(&self, s: &str, pos: CharSpaceCoord) -> std::io::Result<ExitStatus> {
-        self.fbink_exec(vec![
+    pub fn write_str(
+        &self,
+        s: &str,
+        pos: CharSpaceCoord,
+        invert_colors: bool,
+    ) -> std::io::Result<ExitStatus> {
+        let mut args = vec![
             "-y".to_string(),
             pos.y.to_string(),
             "-x".to_string(),
             pos.x.to_string(),
             s.to_string(),
-        ])
+        ];
+
+        if invert_colors {
+            args.push("--invert".to_string());
+        }
+
+        self.fbink_exec(args)
     }
 }
