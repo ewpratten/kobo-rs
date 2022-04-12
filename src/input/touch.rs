@@ -2,23 +2,28 @@ use std::fs::File;
 
 use chrono::{DateTime, Duration, Utc};
 use evdev_rs::{Device, InputEvent, ReadFlag, ReadStatus};
-use nalgebra::Vector2;
 
-use super::error::InputError;
+use crate::coords::PixelSpaceCoord;
 
+/// Describes a touch event.
 #[derive(Debug, Clone)]
 pub struct Touch {
-    pub position: Vector2<i32>,
+    /// The touch position
+    pub position: PixelSpaceCoord,
+    /// The touch pressure
     pub pressure: i32,
+    /// The timestamp of the touch event
     pub timestamp: DateTime<Utc>,
 }
 
 impl Touch {
+    /// Checks if the touch is a finger-down event
     pub fn is_down(&self) -> bool {
         self.pressure > 0
     }
 }
 
+/// Blocking event listener for touch events
 pub struct TouchEventListener {
     device: Device,
 }
@@ -46,7 +51,11 @@ impl TouchEventListener {
     /// While this will attempt to stop at a timeout, there is a chance the event stream will just block us past it anyways.
     ///
     /// Pressure is currently unreliable, so we'll just assume it's always down.
-    pub fn next_touch(&self, timeout: Option<Duration>) -> Option<Touch> {
+    pub fn next_touch(
+        &self,
+        screen_size: PixelSpaceCoord,
+        timeout: Option<Duration>,
+    ) -> Option<Touch> {
         // Keep track of the start time
         let start = Utc::now();
 
@@ -73,11 +82,14 @@ impl TouchEventListener {
                 // We are looking for ABS touch events
                 match event.event_code {
                     evdev_rs::enums::EventCode::EV_ABS(kind) => match kind {
+                        // Note:
+                        // X and Y are swapped from the event stream
+                        // X is also inverted
                         evdev_rs::enums::EV_ABS::ABS_X => {
-                            x = Some(event.value);
+                            y = Some(event.value);
                         }
                         evdev_rs::enums::EV_ABS::ABS_Y => {
-                            y = Some(event.value);
+                            x = Some(screen_size.x - event.value);
                         }
                         evdev_rs::enums::EV_ABS::ABS_PRESSURE => {
                             pressure = Some(event.value);
@@ -92,7 +104,7 @@ impl TouchEventListener {
             if x.is_some() && y.is_some() && pressure.is_some() {
                 // Return the touch event
                 return Some(Touch {
-                    position: Vector2::new(x.unwrap(), y.unwrap()),
+                    position: PixelSpaceCoord::new(x.unwrap(), y.unwrap()),
                     pressure: pressure.unwrap(),
                     timestamp: Utc::now(),
                 });

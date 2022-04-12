@@ -40,6 +40,23 @@
 			],
 			"group": "build",
 			"label": "Example: touch2coord"
+		},
+		{
+			"type": "shell",
+			"command": "cross",
+			"args": [
+				"build",
+				"--target",
+				"arm-unknown-linux-musleabihf",
+				"--release",
+				"--example",
+				"display"
+			],
+			"problemMatcher": [
+				"$rustc"
+			],
+			"group": "build",
+			"label": "Example: display"
 		}
 	]
 }
