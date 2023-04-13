@@ -77,6 +77,7 @@ impl TouchEventListener {
             // Read the next event
             let (status, event) = self.next_raw_event().unwrap();
 
+
             // Check the status
             if status == ReadStatus::Success {
                 // We are looking for ABS touch events
@@ -89,6 +90,12 @@ impl TouchEventListener {
                             y = Some(event.value);
                         }
                         evdev_rs::enums::EV_ABS::ABS_Y => {
+                            x = Some(screen_size.x - event.value);
+                        }
+                        evdev_rs::enums::EV_ABS::ABS_MT_POSITION_X => {
+                            y = Some(event.value);
+                        }
+                        evdev_rs::enums::EV_ABS::ABS_MT_POSITION_Y => {
                             x = Some(screen_size.x - event.value);
                         }
                         evdev_rs::enums::EV_ABS::ABS_PRESSURE => {
