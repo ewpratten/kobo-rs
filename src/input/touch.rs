@@ -1,4 +1,4 @@
-use std::{fs::File, str::FromStr};
+use std::{alloc::System, fs::File, str::FromStr};
 
 use chrono::{DateTime, Duration, Utc};
 use evdev_rs::{Device, InputEvent, ReadFlag, ReadStatus};
@@ -102,6 +102,9 @@ impl TouchEventListener {
                             x = Some(screen_size.x - event.value);
                         }
                         evdev_rs::enums::EV_ABS::ABS_PRESSURE => {
+                            pressure = Some(event.value);
+                        }
+                        evdev_rs::enums::EV_ABS::ABS_MT_PRESSURE => {
                             pressure = Some(event.value);
                         }
                         _ => {}
